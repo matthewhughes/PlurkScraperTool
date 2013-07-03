@@ -1,4 +1,6 @@
 from plurk_oauth.PlurkAPI import PlurkAPI
+from collections import OrderedDict
+import scraperwiki
 import sys
 
 api_key = "dd3wbShd2U6S"
@@ -9,11 +11,19 @@ plurk = PlurkAPI(api_key, api_secret)
 
 def main():
     plurks = plurk.callAPI('/APP/PlurkSearch/search', {'query' : argument})
+    rows = []
     for p in plurks["plurks"]:
-        print p["plurk_id"]
-        print p["owner_id"]
-        print p["qualifier"]    
-        print p["content"]
+        row = OrderedDict()
+        row['Plurk_ID'] = p["plurk_id"]
+        row['Owner_ID'] = p["owner_id"]
+        row['Verb'] = p["qualifier"]    
+	row['Content'] = p["content"]
+        rows.append(row)
+    submit_to_scraperwiki(rows)
+
+def submit_to_scraperwiki(rows):
+    scraperwiki.sqlite.save(["plurk_id"], rows, argument)
+
 
 if __name__ == '__main__':
     main()
