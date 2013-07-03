@@ -1,7 +1,9 @@
 from plurk_oauth.PlurkAPI import PlurkAPI
 from collections import OrderedDict
+import traceback
 import scraperwiki
 import sys
+import json
 
 api_key = "dd3wbShd2U6S"
 api_secret = "yuf0pRU0mHJlzofEan7Gkm2jw8s07Q0w"
@@ -9,7 +11,37 @@ api_secret = "yuf0pRU0mHJlzofEan7Gkm2jw8s07Q0w"
 argument = sys.argv[1]
 plurk = PlurkAPI(api_key, api_secret)
 
+class InvalidArgumentError(Exception):
+    pass
+
 def main():
+    try:
+        if len(sys.argv) != 2:
+            raise InvalidArgumentError("Please supply a single argument. An example would be 'kittens'")
+        else:
+            search_plurk(argument)
+
+    except Exception, e:
+        scraperwiki.status('error', type(e).__name__)
+        print json.dumps({
+            'error': {
+                'type': type(e).__name__,
+                'message': str(e),
+                'trace': traceback.format_exc()
+            }
+        })
+
+    else:
+        scraperwiki.status('ok')
+        print json.dumps({
+            'success': {
+                'type': 'ok',
+                'message': "Searched Plurk"
+            }
+        })
+
+
+def search_plurk(argument):
     plurks = plurk.callAPI('/APP/PlurkSearch/search', {'query' : argument})
     rows = []
     for p in plurks["plurks"]:
