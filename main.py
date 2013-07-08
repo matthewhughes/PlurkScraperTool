@@ -5,8 +5,8 @@ import scraperwiki
 import sys
 import json
 
-api_key = "dd3wbShd2U6S"
-api_secret = "yuf0pRU0mHJlzofEan7Gkm2jw8s07Q0w"
+api_key = "REDACTED"
+api_secret = "REDACTED"
 
 argument = sys.argv[1]
 plurk = PlurkAPI(api_key, api_secret)
